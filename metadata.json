@@ -1,0 +1,6 @@
+{
+  "name": "TaperK",
+  "description": "A simple, private, and calm taper tracker for kratom reduction.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
