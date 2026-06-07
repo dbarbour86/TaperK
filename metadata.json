@@ -1,6 +1,6 @@
 {
   "name": "TaperK",
-  "description": "A simple, private, and calm taper tracker for kratom reduction.",
+  "description": "TaperK is a private, secure, and intuitive Kratom taper tracker and dosage schedule calculator.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
