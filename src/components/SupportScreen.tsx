@@ -11,7 +11,12 @@ import {
   Sliders,
   Check,
   Briefcase,
-  ExternalLink
+  ExternalLink,
+  Search,
+  HelpCircle,
+  BookOpen,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface SupportScreenProps {
@@ -20,6 +25,51 @@ interface SupportScreenProps {
   onResetPlan: () => void;
   onEditPlanSettings: () => void;
 }
+
+const FAQ_DATABASE = [
+  {
+    id: 'faq-1',
+    category: 'Tapering Basics',
+    keywords: 'kratom taper how to start reduction step down gpd grams per day',
+    question: 'How do I taper off Kratom safely and effectively?',
+    answer: 'A safe Kratom taper involves calculating your starting baseline daily intake (Grams Per Day / GPD), choosing a sustainable reduction pace (Gentle, Moderate, or Aggressive), and distributing your total daily target into evenly spaced doses. TaperK generates a customized step-down calendar and helps you log daily doses to stay on track.'
+  },
+  {
+    id: 'faq-2',
+    category: 'Calculator & Measurements',
+    keywords: 'kratom taper calculator grams per day gpd measuring scale powder',
+    question: 'How does the Kratom Taper Calculator determine my schedule?',
+    answer: 'The TaperK calculator takes your baseline GPD, dose frequency (e.g. 3 to 6 times daily), and chosen taper rate. For Gentle tapers, daily targets drop by ~0.25g-0.5g every 5-7 days. For Moderate tapers, targets drop by ~0.5g every 3-4 days. Aggressive tapers drop by 1.0g every 2-3 days. You can adjust targets anytime.'
+  },
+  {
+    id: 'faq-3',
+    category: 'Capsules & Extracts',
+    keywords: 'capsules extract shots liquid mitragynine conversion size 00 000 grams',
+    question: 'How do I convert Kratom capsules or liquid extract shots to grams?',
+    answer: 'Standard Size 00 capsules hold ~0.5 grams of powder, while Size 000 capsules hold ~0.8g to 1.0g. Liquid extract shots state total mitragynine (MIT) content (e.g., 150mg MIT). Because standard plain leaf powder averages 1.2%–1.5% mitragynine (~12-15mg per gram), a 150mg extract shot equals roughly 10 to 12 grams of raw leaf powder.'
+  },
+  {
+    id: 'faq-4',
+    category: 'Withdrawal Symptoms',
+    keywords: 'withdrawal symptoms restless leg syndrome rls insomnia anxiety fatigue digestive',
+    question: 'How do I track and manage Kratom withdrawal symptoms?',
+    answer: 'Common mild-to-moderate physical responses during a taper include Restless Leg Syndrome (RLS), insomnia, anxiety, mild fatigue, and body aches. TaperK lets you log daily symptom severity scores. If your symptom score rises, hold your target dose for an extra 3 to 5 days before stepping down again.'
+  },
+  {
+    id: 'faq-5',
+    category: 'Privacy & Data Security',
+    keywords: 'privacy private local storage offline account security database',
+    question: 'Is TaperK private and confidential?',
+    answer: 'Yes! TaperK stores 100% of your dosage logs, symptom entries, water tracking, and settings directly in your device’s local browser storage. No accounts, email sign-ups, or external cloud databases are used, ensuring total privacy.'
+  },
+  {
+    id: 'faq-6',
+    category: 'Comfort & Hydration',
+    keywords: 'water hydration magnesium agmatine sleep hydration support comfort',
+    question: 'What lifestyle practices help during a Kratom dose reduction?',
+    answer: 'Staying hydrated (drinking at least 64–96 oz of water daily) is essential as Kratom is a diuretic. Many users find mild exercise, magnesium glycinate for muscle relaxation/RLS support, and sticking to consistent dose timing helpful during a taper.'
+  }
+];
 
 export default function SupportScreen({
   setupData,
@@ -36,6 +86,21 @@ export default function SupportScreen({
   });
   const [isEditingSupporter, setIsEditingSupporter] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // FAQ Search & Filter state
+  const [faqSearch, setFaqSearch] = useState('');
+  const [openFaqId, setOpenFaqId] = useState<string | null>('faq-1');
+
+  const filteredFaqs = FAQ_DATABASE.filter(item => {
+    if (!faqSearch.trim()) return true;
+    const query = faqSearch.toLowerCase();
+    return (
+      item.question.toLowerCase().includes(query) ||
+      item.answer.toLowerCase().includes(query) ||
+      item.category.toLowerCase().includes(query) ||
+      item.keywords.toLowerCase().includes(query)
+    );
+  });
 
   const handleSaveSupporter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +121,77 @@ export default function SupportScreen({
           Support & Welfare
         </h2>
         <p className="text-xs text-brand-300/80">
-          Helplines, medical indicators, and settings to maintain complete control.
+          Helplines, medical indicators, tapering knowledge base, and local data settings.
         </p>
+      </div>
+
+      {/* SEARCHABLE FAQ & KNOWLEDGE BASE SECTION */}
+      <div id="faq-knowledge-base" className="bg-brand-950/40 border border-brand-900/50 p-5 rounded-3xl space-y-4 shadow-md text-left">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-brand-200 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-brand-400 shrink-0" />
+            Kratom Taper Knowledge Base & FAQs
+          </h3>
+          <span className="text-[10px] bg-brand-900/60 border border-brand-800 text-brand-300/70 px-2 py-0.5 rounded-full font-mono">
+            {filteredFaqs.length} Guides
+          </span>
+        </div>
+
+        {/* Search Input Box */}
+        <div className="relative">
+          <Search className="w-3.5 h-3.5 text-brand-300/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search keywords (e.g. capsules, calculator, RLS, GPD)..."
+            value={faqSearch}
+            onChange={(e) => setFaqSearch(e.target.value)}
+            className="w-full bg-brand-950 border border-brand-800 rounded-xl pl-8 pr-3 py-2 text-xs text-brand-100 outline-none placeholder-brand-300/30 font-sans focus:border-brand-500/50 transition"
+          />
+        </div>
+
+        {/* FAQ Accordion List */}
+        <div className="space-y-2">
+          {filteredFaqs.length === 0 ? (
+            <div className="p-4 text-center text-xs text-brand-300/40 bg-brand-950/30 rounded-xl border border-brand-900/30">
+              No specific guides found for "{faqSearch}". Try searching for terms like "capsules", "withdrawal", "schedule", or "gpd".
+            </div>
+          ) : (
+            filteredFaqs.map((faq) => {
+              const isOpen = openFaqId === faq.id;
+              return (
+                <div
+                  key={faq.id}
+                  className="bg-brand-950 rounded-xl border border-brand-900/40 overflow-hidden transition"
+                >
+                  <button
+                    onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
+                    className="w-full px-3.5 py-3 text-left flex items-center justify-between gap-2 cursor-pointer hover:bg-brand-900/30 transition"
+                  >
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase tracking-wider font-mono text-brand-400/80 font-bold block">
+                        {faq.category}
+                      </span>
+                      <span className="text-xs font-semibold text-brand-100 block leading-snug">
+                        {faq.question}
+                      </span>
+                    </div>
+                    {isOpen ? (
+                      <ChevronUp className="w-4 h-4 text-brand-400 shrink-0" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-brand-300/40 shrink-0" />
+                    )}
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-3.5 pb-3.5 pt-1 text-xs text-brand-200/90 border-t border-brand-900/30 leading-relaxed font-sans bg-brand-950/60">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
 
       {/* EMERGENCY CRISIS WARNING */}
@@ -132,7 +266,7 @@ export default function SupportScreen({
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="flex-1 py-2 bg-brand-500 hover:bg-brand-405 text-brand-950 text-xs font-bold rounded-lg cursor-pointer"
+                className="flex-1 py-2 bg-brand-500 hover:bg-brand-400 text-brand-950 text-xs font-bold rounded-lg cursor-pointer"
               >
                 Save Supporter
               </button>
@@ -208,7 +342,7 @@ export default function SupportScreen({
 
       {/* CORE MAINTENANCE / DATA OPTIONS CARD */}
       <div id="settings-maintenance-card" className="bg-brand-950/40 border border-brand-900/50 p-5 rounded-3xl space-y-4">
-        <h3 className="text-sm font-semibold text-brand-200">Plan Options & Maintenence</h3>
+        <h3 className="text-sm font-semibold text-brand-200">Plan Options & Maintenance</h3>
         <p className="text-[11px] text-brand-300/50 leading-relaxed">
           Manage your personal records, modify limits, or factory refresh local storage safely.
         </p>
@@ -255,3 +389,4 @@ export default function SupportScreen({
     </div>
   );
 }
+
